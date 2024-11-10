@@ -1,0 +1,105 @@
+8) DML using MYSQL
+
+Create following tables using a given schema and insert appropriate data into the same:
+Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age)
+Branch (Branch ID, Branch_Name, Address)
+Account (Account_no, Branch ID, CustID, date_open, Account_type, Balance)
+1. Modify the size of column “Email_Address” to 20 in Customer table.
+2. Change the column “Email_Address” to Not Null in Customer table.
+3. Display the total customers with the balance >50, 000 Rs.
+4. Display average balance for account type=”Saving Account”.
+5. Display the customer details that lives in Pune or name starts with ’A’.
+6. Create a table Saving_Account with (Account_no, Branch ID, CustID, date_open, Balance) using
+Account Table.
+7. Display the customer details Age wise with balance>=20,000Rs
+
+
+
+-- Creating Customer table
+CREATE TABLE Customer (
+    CustID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Cust_Address VARCHAR(100),
+    Phone_no VARCHAR(15),
+    Email_ID VARCHAR(50),
+    Age INT
+);
+
+-- Inserting sample data into Customer table
+INSERT INTO Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age) VALUES
+(1, 'Alice', 'Pune', '9876543210', 'alice@example.com', 30),
+(2, 'Bob', 'Mumbai', '9876543211', 'bob@example.com', 40),
+(3, 'Anita', 'Pune', '9876543212', 'anita@example.com', 25),
+(4, 'Charles', 'Delhi', '9876543213', 'charles@example.com', 50);
+
+-- Creating Branch table
+CREATE TABLE Branch (
+    Branch_ID INT PRIMARY KEY,
+    Branch_Name VARCHAR(50),
+    Address VARCHAR(100)
+);
+
+-- Inserting sample data into Branch table
+INSERT INTO Branch (Branch_ID, Branch_Name, Address) VALUES
+(1, 'Main Branch', 'Mumbai'),
+(2, 'Pune Branch', 'Pune');
+
+-- Creating Account table
+CREATE TABLE Account (
+    Account_no INT PRIMARY KEY,
+    Branch_ID INT,
+    CustID INT,
+    date_open DATE,
+    Account_type VARCHAR(20),
+    Balance DECIMAL(10, 2),
+    FOREIGN KEY (Branch_ID) REFERENCES Branch(Branch_ID),
+    FOREIGN KEY (CustID) REFERENCES Customer(CustID)
+);
+
+-- Inserting sample data into Account table
+INSERT INTO Account (Account_no, Branch_ID, CustID, date_open, Account_type, Balance) VALUES
+(1001, 1, 1, '2020-01-01', 'Saving Account', 60000.00),
+(1002, 2, 2, '2019-06-15', 'Current Account', 45000.00),
+(1003, 1, 3, '2021-04-20', 'Saving Account', 75000.00),
+(1004, 2, 4, '2018-09-05', 'Saving Account', 20000.00);
+
+step2) Modify
+ALTER TABLE Customer MODIFY Email_ID VARCHAR(20);
+
+ALTER TABLE Customer MODIFY Email_ID VARCHAR(20) NOT NULL;
+
+step3) Display the total number of customers with a balance greater than 50,000 Rs.
+
+SELECT COUNT(*) AS Total_Customers
+FROM Account
+WHERE Balance > 50000;
+
+Step 4: Display the average balance for accounts of type "Saving Account".
+
+SELECT AVG(Balance) AS Avg_Saving_Balance
+FROM Account
+WHERE Account_type = 'Saving Account';
+
+Step 5: Display customer details for those living in Pune or whose name starts with 'A'.
+
+SELECT *
+FROM Customer
+WHERE Cust_Address = 'Pune' OR Name LIKE 'A%';
+
+step 6: Create a Saving_Account table using data from the Account table.
+
+CREATE TABLE Saving_Account AS
+SELECT Account_no, Branch_ID, CustID, date_open, Balance
+FROM Account
+WHERE Account_type = 'Saving Account';
+
+
+Step 7: Display customer details sorted by age for those with a balance of at least 20,000 Rs.
+
+SELECT C.*
+FROM Customer C
+JOIN Account A ON C.CustID = A.CustID
+WHERE A.Balance >= 20000
+ORDER BY C.Age;
+
+

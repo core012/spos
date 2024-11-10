@@ -1,0 +1,104 @@
+11 (DDL USING MYSQL)
+
+Create following tables using a given schema and insert appropriate data into the same:
+Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age)
+Branch (Branch ID, Branch_Name, Address)
+Account (Account_no, Branch ID, CustID, date_open, Account_type, Balance)
+1. Create the tables with referential integrity.
+2. Draw the ER diagram for the same.
+3. Create an Index on primary key column of table Account
+4. Create the view as Customer_Info displaying the customer details for age less than 45.
+5. Update the View with open date as 16/4/2017
+6. Create a sequence on Branch able.
+7. Create synonym ‘Branch_info’ for branch table.
+
+
+ANS:
+
+-- Customer table
+CREATE TABLE Customer (
+    CustID INT PRIMARY KEY,
+    Name VARCHAR(100),
+    Cust_Address VARCHAR(255),
+    Phone_no VARCHAR(15),
+    Email_ID VARCHAR(100),
+    Age INT
+);
+
+-- Branch table
+CREATE TABLE Branch (
+    Branch_ID INT PRIMARY KEY,
+    Branch_Name VARCHAR(100),
+    Address VARCHAR(255)
+);
+
+-- Account table with referential integrity linking to Customer and Branch tables
+CREATE TABLE Account (
+    Account_no INT PRIMARY KEY,
+    Branch_ID INT,
+    CustID INT,
+    date_open DATE,
+    Account_type VARCHAR(50),
+    Balance DECIMAL(15, 2),
+    FOREIGN KEY (Branch_ID) REFERENCES Branch(Branch_ID),
+    FOREIGN KEY (CustID) REFERENCES Customer(CustID)
+);
+
+
+-- Insert data into Customer table
+INSERT INTO Customer (CustID, Name, Cust_Address, Phone_no, Email_ID, Age)
+VALUES 
+    (1, 'Alice Brown', '123 Elm St', '555-1234', 'alice@example.com', 34),
+    (2, 'Bob Smith', '456 Oak St', '555-5678', 'bob@example.com', 42),
+    (3, 'Charlie Day', '789 Pine St', '555-8765', 'charlie@example.com', 50);
+
+-- Insert data into Branch table
+INSERT INTO Branch (Branch_ID, Branch_Name, Address)
+VALUES 
+    (101, 'Downtown Branch', '12 City Plaza'),
+    (102, 'Uptown Branch', '34 Town Ave'),
+    (103, 'Midtown Branch', '56 Main St');
+
+-- Insert data into Account table
+INSERT INTO Account (Account_no, Branch_ID, CustID, date_open, Account_type, Balance)
+VALUES 
+    (1001, 101, 1, '2017-04-16', 'Savings', 1000.00),
+    (1002, 102, 2, '2019-08-24', 'Checking', 1500.00),
+    (1003, 103, 3, '2020-11-10', 'Savings', 2000.00);
+
+Step 3: Draw the ER Diagram
+The ER Diagram will contain:
+
+Customer with CustID as the primary key.
+Branch with Branch_ID as the primary key.
+Account with Account_no as the primary key, and foreign keys Branch_ID and CustID referencing Branch and Customer respectively.
+
+Step 4: Create an Index on Primary Key Column of Table Account
+
+CREATE INDEX idx_account_no ON Account (Account_no);
+
+
+Step 5: Create a View Customer_Info Displaying Details of Customers Younger Than 45
+
+CREATE VIEW Customer_Info AS
+SELECT CustID, Name, Cust_Address, Phone_no, Email_ID, Age
+FROM Customer
+WHERE Age < 45;
+
+Step 6: Update the Customer_Info View to Set date_open as 16/04/2017 for All Records
+
+CREATE OR REPLACE VIEW Customer_Info AS
+SELECT CustID, Name, Cust_Address, Phone_no, Email_ID, Age, '2017-04-16' AS date_open
+FROM Customer
+WHERE Age < 45;
+
+Step 7: Create a Sequence for Branch Table
+
+CREATE SEQUENCE branch_seq
+START WITH 104
+INCREMENT BY 1;
+
+Step 8: Create Synonym Branch_info for Branch Table
+
+CREATE SYNONYM Branch_info FOR Branch;
+
